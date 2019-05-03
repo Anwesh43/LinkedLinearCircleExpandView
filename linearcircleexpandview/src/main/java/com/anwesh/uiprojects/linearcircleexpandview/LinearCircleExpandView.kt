@@ -198,4 +198,26 @@ class LinearCircleExpandView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : LinearCircleExpandView) {
+
+        private val lce : LinearCircleExpand = LinearCircleExpand(0)
+        private val animator : Animator = Animator(view)
+
+        fun render(canvas : Canvas, paint : Paint)  {
+            canvas.drawColor(backColor)
+            lce.draw(canvas, paint)
+            animator.animate {
+                lce.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            lce.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
