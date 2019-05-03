@@ -21,6 +21,7 @@ val strokeFactor : Int = 90
 val sizeFactor : Float = 2.9f
 val foreColor : Int = Color.parseColor("#673AB7")
 val backColor : Int = Color.parseColor("#BDBDBD")
+val delay : Long = 25
 
 
 fun Int.inverse() : Float = 1f / this
@@ -34,7 +35,7 @@ fun Float.mirrorValue(a : Int, b : Int) : Float {
 fun Float.updateValue(dir : Float, a : Int, b : Int) : Float = mirrorValue(a, b) * dir * scGap
 
 fun Canvas.drawLinearCircleExpand(i : Int, size : Float, sc1 : Float, sc2 : Float, paint : Paint) {
-    val r : Float = size / (3 * circles - 1)
+    val r : Float = 2 * size / (3 * circles - 1)
     val x : Float = (size - 2 * r) * sc2.divideScale(i, circles)
     val y : Float = 3 * r * i + r
     save()
@@ -54,13 +55,14 @@ fun Canvas.drawLCENode(i : Int, scale : Float, paint : Paint) {
     paint.color = foreColor
     paint.strokeWidth = Math.min(w, h) / strokeFactor
     paint.strokeCap = Paint.Cap.ROUND
+    paint.style = Paint.Style.STROKE
     save()
     translate(w / 2, gap * (i + 1))
     save()
     translate(0f, -size)
     drawLine(0f, 0f, 0f, 2 * size, paint)
     for (j in 0..(circles - 1)) {
-        drawLinearCircleExpand(i, size, sc1, sc2, paint)
+        drawLinearCircleExpand(j, size, sc1, sc2, paint)
     }
     restore()
     restore()
@@ -110,7 +112,7 @@ class LinearCircleExpandView(ctx : Context) : View(ctx) {
             if (animated) {
                 cb()
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep(delay)
                     view.invalidate()
                 } catch(ex : Exception) {
 
