@@ -11,6 +11,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Color
+import android.graphics.RectF
 
 val nodes : Int = 5
 val circles : Int = 3
@@ -31,3 +32,36 @@ fun Float.mirrorValue(a : Int, b : Int) : Float {
     return (1 - k) * a.inverse() + k * b.inverse()
 }
 fun Float.updateValue(dir : Float, a : Int, b : Int) : Float = mirrorValue(a, b) * dir * scGap
+
+fun Canvas.drawLinearCircleExpand(i : Int, size : Float, sc1 : Float, sc2 : Float, paint : Paint) {
+    val r : Float = size / (3 * circles - 1)
+    val x : Float = (size - 2 * r) * sc2.divideScale(i, circles)
+    val y : Float = 3 * r * i + r
+    save()
+    translate(0f, y)
+    drawArc(RectF(x, -r, x + 2 * r, r), 180f, 360f * sc1.divideScale(i, circles), false, paint)
+    drawLine(0f, 0f, x, 0f, paint)
+    restore()
+}
+
+fun Canvas.drawLCENode(i : Int, scale : Float, paint : Paint) {
+    val w : Float = width.toFloat()
+    val h : Float = height.toFloat()
+    val gap : Float = h / (nodes + 1)
+    val sc1 : Float = scale.divideScale(0, 2)
+    val sc2 : Float = scale.divideScale(1, 2)
+    val size : Float = gap / sizeFactor
+    paint.color = foreColor
+    paint.strokeWidth = Math.min(w, h) / strokeFactor
+    paint.strokeCap = Paint.Cap.ROUND
+    save()
+    translate(w / 2, gap * (i + 1))
+    save()
+    translate(0f, -size)
+    drawLine(0f, 0f, 0f, 2 * size, paint)
+    for (j in 0..(circles - 1)) {
+        drawLinearCircleExpand(i, size, sc1, sc2, paint)
+    }
+    restore()
+    restore()
+}
