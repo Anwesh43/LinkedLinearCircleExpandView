@@ -221,4 +221,13 @@ class LinearCircleExpandView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+
+        fun create(activity : Activity) : LinearCircleExpandView {
+            val view : LinearCircleExpandView = LinearCircleExpandView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
